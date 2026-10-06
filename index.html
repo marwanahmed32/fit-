@@ -64,8 +64,8 @@ svg.ch{width:100%;height:auto;display:block}.ch text{fill:var(--mu);font-size:10
 <div id="modal"></div><div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
-const SB_URL='https://tzhxjtzexxzhcivscjaf.supabase.co';
-const SB_KEY='sb_publishable_Lds5Z3crQ5lmt9yzxfdnyg_kM3RtrNA'; // publishable key: safe in frontend, data protected by RLS
+const SB_URL='https://nalazoqhzotcxpexkfqq.supabase.co';
+const SB_KEY='sb_publishable_ioE1BhVQqZ8OSG8JSg4Eug_dMfB8tLY'; // publishable key: safe in frontend, data protected by RLS
 const sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
 const $=(s,e=document)=>e.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -198,7 +198,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 const F={
  async auth(f,btn){const email=f.email.value.trim(),pw=f.password?.value;await run(btn,async()=>{
   if(S.auth==='login'){const{error}=await sb.auth.signInWithPassword({email,password:pw});if(error)throw error}
-  else if(S.auth==='signup'){const{data,error}=await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split('#')[0],data:{display_name:'fitpro:'+email.split('@')[0]}}});if(error)throw error;if(!data.session){toast('أرسلنا رسالة تفعيل لبريدك. فعّل حسابك ثم سجّل الدخول.');S.auth='login';render()}}
+  else if(S.auth==='signup'){const{data,error}=await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split('#')[0]}});if(error)throw error;if(!data.session){toast('أرسلنا رسالة تفعيل لبريدك. فعّل حسابك ثم سجّل الدخول.');S.auth='login';render()}}
   else{const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.href.split('#')[0]});if(error)throw error;toast('أرسلنا رابط استعادة كلمة المرور لبريدك');S.auth='login';render()}})},
  async newpass(f,btn){await run(btn,async()=>{const{error}=await sb.auth.updateUser({password:f.password.value});if(error)throw error;S.recovery=false;toast('تم تغيير كلمة المرور');await boot()})},
  async onboard(f,btn){const fd=new FormData(f),L=k=>String(fd.get(k)||'').split(/[,،]/).map(s=>s.trim()).filter(Boolean);
