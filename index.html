@@ -66,6 +66,7 @@ svg.ch{width:100%;height:auto;display:block}.ch text{fill:var(--mu);font-size:10
 <script>
 const SB_URL='https://nalazoqhzotcxpexkfqq.supabase.co';
 const SB_KEY='sb_publishable_ioE1BhVQqZ8OSG8JSg4Eug_dMfB8tLY'; // publishable key: safe in frontend, data protected by RLS
+if(typeof supabase==='undefined'){document.getElementById('app').innerHTML='<div class="center"><h2>تعذّر تحميل المكتبات</h2><p class="mu">تأكد من الاتصال بالإنترنت ثم أعد تحميل الصفحة.</p></div>';throw new Error('supabase lib missing')}
 const sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
 const $=(s,e=document)=>e.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -247,9 +248,10 @@ async function boot(){
 }
 if(localStorage.theme)document.documentElement.dataset.theme=localStorage.theme;
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){navigator.serviceWorker.register('sw.js').then(r=>swReg=r).catch(()=>{});navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='water-done')confirmWater();if(e.data?.type==='water-snooze')snooze()})}
+sb.auth.getSession().then(({data})=>{if(!data.session&&!S.user)render()}).catch(()=>render());
 sb.auth.onAuthStateChange(async(ev,session)=>{
  if(ev==='PASSWORD_RECOVERY'){S.recovery=true;S.user=session?.user||null;return render()}
- const u=session?.user||null;if(u?.id===S.user?.id&&ev!=='SIGNED_IN')return;
+ const u=session?.user||null;if(u&&u.id===S.user?.id)return;
  S.user=u;if(!u){Object.assign(S,{profile:null,plan:null,settings:null,view:'home',pendingWater:false,mealLogs:[],water:[],wlogs:[],chat:[],meas:[]});return render()}
  setTimeout(boot,0);
 });
